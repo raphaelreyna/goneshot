@@ -16,10 +16,11 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0">File/Folder:</Label>
-                    <Button Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="20" Width="113">Select a file or folder</Button>
+                    <Label Grid.Row="0" x:Name="fileDirLabel">None</Label>
+                    <Button Grid.Row="0" x:Name="selectFileDir" HorizontalAlignment="Right" VerticalAlignment="Top" Height="20" Width="113">Select a file or folder</Button>
 
                     <Label Grid.Row="1">Trigger download: </Label>
-                    <CheckBox Grid.Row="1"/>
+                    <CheckBox Grid.Row="1" Checked="downloadChecked"/>
 
                     <Button Grid.Row="2">Start</Button>
                 </Grid>
