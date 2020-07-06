@@ -1,0 +1,32 @@
+﻿<Window x:Class="goneshot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:goneshot"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="328.143">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Send">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0">File/Folder:</Label>
+                    <Button Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="20" Width="113">Select a file or folder</Button>
+
+                    <Label Grid.Row="1">Trigger download: </Label>
+                    <CheckBox Grid.Row="1"/>
+
+                    <Button Grid.Row="2">Start</Button>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Receive">
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
