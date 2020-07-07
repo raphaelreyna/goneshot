@@ -5,28 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:goneshot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="328.143">
+        Title="MainWindow" Height="192.857" Width="328.143">
     <Grid>
         <TabControl>
             <TabItem Header="Send">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="8*"/>
-                        <RowDefinition Height="8*"/>
-                        <RowDefinition Height="1*"/>
-                    </Grid.RowDefinitions>
-                    <Label Grid.Row="0">File/Folder:</Label>
-                    <Label Grid.Row="0" x:Name="fileDirLabel">None</Label>
-                    <Button Grid.Row="0" x:Name="selectFileDir" HorizontalAlignment="Right" VerticalAlignment="Top" Height="20" Width="113">Select a file or folder</Button>
-
-                    <Label Grid.Row="1">Trigger download: </Label>
-                    <CheckBox Grid.Row="1" Checked="downloadChecked"/>
-
-                    <Button Grid.Row="2">Start</Button>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Receive">
-
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>File/Folder:</Label>
+                        <Label x:Name="fileDirLabel">None</Label>
+                        <Button x:Name="selectFileDir" HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="113">Select a file or folder</Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Trigger download:</Label>
+                        <CheckBox x:Name="downloadCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Use mDNS (Avahi/Bonjour):</Label>
+                        <CheckBox x:Name="mdnsCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Exit on fail:</Label>
+                        <CheckBox x:Name="eofCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Button Click="handleStart">Start</Button>
+                    </StackPanel>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </Grid>

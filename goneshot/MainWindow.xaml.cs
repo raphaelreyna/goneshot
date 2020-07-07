@@ -21,49 +21,87 @@ namespace goneshot
     /// </summary>
     public partial class MainWindow : Window
     {
+        /*
         private string port;
         private string timeOut;
-        private bool noDownload;
-        private bool exitOnFial;
+        private string noDownload;
+        private string exitOnFial;
         private string archiveMethod;
-        private bool mdns;
+        private string mdns;
         private string fileName;
         private string fileExt;
         private string fileMime;
         private string certFile;
         private string keyFile;
-        private bool ssTLS;
+        private string ssTLS;
         private string username;
         private string password;
-        private bool cgi;
-        private bool cgiStrict;
+        private string cgi;
+        private string cgiStrict;
         private string shellCommand;
-        private bool replaceHeaders;
+        private string replaceHeaders;
         private string dir;
+        */
+
+        private Dictionary<String, String> args;
 
         public MainWindow()
         {
             InitializeComponent();
-            run();
-        }
-
-        private void downloadChecked(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
+            args = new Dictionary<String, String>();
         }
 
         private void run()
         {
             var process = new Process();
             process.StartInfo.FileName = "C:\\Tools\\goneshot\\oneshot.exe";
-            process.StartInfo.Arguments = "-u";
+            String arguments = "";
+            foreach(var entry in args)
+            {
+                String value = entry.Value;
+                if (value != "")
+                {
+                    arguments += value + " ";
+                }
+            }
+            Console.WriteLine(arguments);
+            process.StartInfo.Arguments = arguments;
             process.StartInfo.UseShellExecute = true;
             process.Start();
+        }
+
+        private void checkbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkbox = (CheckBox) sender;
+            String name = checkbox.Name;
+
+            switch (name) 
+            {
+                case "downloadCheckbox":
+                    Console.WriteLine("download unset");
+                    args[name] = "";
+                    break;
+            }
+            
+        }
+
+        private void checkbox_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkbox = (CheckBox)sender;
+            String name = checkbox.Name;
+
+            switch (name)
+            {
+                case "downloadCheckbox":
+                    Console.WriteLine("download set");
+                    args[name] = "-D";
+                    break;
+            }
+        }
+
+        private void handleStart(object sender, RoutedEventArgs e)
+        {
+            run();
         }
     }
 }
