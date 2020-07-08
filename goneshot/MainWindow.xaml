@@ -5,124 +5,133 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:goneshot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="483.3" Width="328.143">
+        Title="MainWindow" Height="495.3" Width="305.333">
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Use mDNS (Avahi/Bonjour):</Label>
                 <CheckBox x:Name="mdnsCheckbox"
-                                  Checked="checkbox_Checked"
-                                  Unchecked="checkbox_Unchecked"
                                   VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Exit on fail:</Label>
                 <CheckBox x:Name="eofCheckbox"
-                                  Checked="checkbox_Checked"
-                                  Unchecked="checkbox_Unchecked"
                                   VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Port: </Label>
+                <TextBox x:Name="portTextBox"
+                         Width="80"
+                         Height="18"
+                         VerticalContentAlignment="Center">8080</TextBox>
             </StackPanel>
             <TabControl>
                 <TabItem Header="Send">
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
+                            <Label>Source Type: </Label>
+                            <ComboBox x:Name="sourceTypeComboBox"
+                                      Width="100"
+                                      Height="20"
+                                      VerticalContentAlignment="Center"
+                                      SelectionChanged="sourceTypeComboBox_SelectionChanged">
+                                <ComboBoxItem Content="File"></ComboBoxItem>
+                                <ComboBoxItem Content="Folder"></ComboBoxItem>
+                                <ComboBoxItem Content="Executable"></ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Source:</Label>
+                            <Label x:Name="sourceLabel">None</Label>
+                            <Button x:Name="sourceButton"
+                                    Click="handleSourceSelectClick"
+                                    HorizontalAlignment="Right"       
+                                    VerticalAlignment="Center"
+                                    Height="20"
+                                    Width="113">
+                                Select a file
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>MIME type:</Label>
+                            <TextBox x:Name="mimeTextBox"
+                                     Width="100"
+                                     Height="18"
+                                     VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel x:Name="downloadPanel" Orientation="Horizontal">
                             <Label>Trigger download:</Label>
                             <CheckBox x:Name="downloadCheckbox"
-                                  Checked="checkbox_Checked"
-                                  Unchecked="checkbox_Unchecked"
                                   VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel>
-                            <TabControl x:Name="sendTabControl">
-                                <TabItem Header="Send File">
-                                    <StackPanel Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>File:</Label>
-                                            <Label x:Name="fileLabel">None</Label>
-                                            <Button x:Name="fileDialogButton"
-                                                Click="handleFileSelectClick"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Height="20"
-                                                Width="113">
-                                                Select a file
-                                            </Button>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Name:</Label>
-                                            <TextBox x:Name="nameTextBox" Width="100"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Extension:</Label>
-                                            <TextBox x:Name="extTextBox" Width="100"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>MIME type:</Label>
-                                            <TextBox x:Name="mimeTextBox" Width="100"/>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </TabItem>
-                                <TabItem Header="Send Folder">
-                                    <StackPanel Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Folder:</Label>
-                                            <Label x:Name="folderLabel">None</Label>
-                                            <Button x:Name="folderBrowserButton"
-                                                Click="handleFileSelectClick"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Height="20" 
-                                                Width="113">
-                                                Select a folder
-                                            </Button>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Compression Method:</Label>
-                                            <ComboBox Width="70">
-                                                <ComboBoxItem Content=".zip"></ComboBoxItem>
-                                                <ComboBoxItem Content=".tar.gz"></ComboBoxItem>
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </TabItem>
-                                <TabItem Header="Send Output">
-                                    <StackPanel Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Command:</Label>
-                                            <TextBox x:Name="scriptTextBox" Width="220"></TextBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>
-                                                Working directory:
-                                            </Label>
-                                            <Label x:Name="dirLabel">None</Label>
-                                            <Button Click="handleDirButton">Select a directory</Button>
-                                        </StackPanel>
-                                        <Label>Header:</Label>
-                                        <ListBox x:Name="headersListBox" SelectionChanged="handleHeaderSelection" SelectionMode="Single">
-                                        </ListBox>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox x:Name="headerTextBox" Width="250"></TextBox>
-                                            <Button x:Name="remHeaderButton"
+                        <StackPanel x:Name="namePanel" Orientation="Horizontal">
+                            <Label>Name:</Label>
+                            <TextBox x:Name="nameTextBox"
+                                     Width="100"
+                                     Height="18"
+                                     VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel x:Name="compressionPanel" Orientation="Horizontal">
+                            <Label>Compression Method:</Label>
+                            <ComboBox x:Name="compressionComboBox"
+                                      Width="70"
+                                      Height="20"
+                                      VerticalContentAlignment="Center">
+                                <ComboBoxItem Content="zip"></ComboBoxItem>
+                                <ComboBoxItem Content="tar.gz"></ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel x:Name="dirPanel" Orientation="Horizontal">
+                            <Label>
+                                Directory:
+                            </Label>
+                            <Label x:Name="dirLabel">None</Label>
+                            <Button x:Name="dirButton"
+                                    Width="110"
+                                    Height="20"
+                                    Click="handleDirButton">Select a directory</Button>
+                        </StackPanel>
+                        <StackPanel x:Name="headerPanel" Orientation="Vertical">
+                            <Label x:Name="headerLabel">Header:</Label>
+                            <ListBox x:Name="headersListBox" SelectionChanged="handleHeaderSelection" SelectionMode="Single" Height="50">
+                            </ListBox>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="headerTextBox"
+                                         Width="250"
+                                         Height="18"
+                                         VerticalContentAlignment="Center"></TextBox>
+                                <Button x:Name="remHeaderButton"
                                     Click="handleAddRemButton"
-                                    Width="20">
-                                                -
-                                            </Button>
-                                            <Button x:Name="addHeaderButton"
+                                    Width="20"
+                                    Height="20">
+                                    -
+                                </Button>
+                                <Button x:Name="addHeaderButton"
                                     Click="handleAddRemButton"
-                                    Width="20">
-                                                +
-                                            </Button>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </TabItem>
-                            </TabControl>
+                                    Width="20"
+                                    Height="20">
+                                    +
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Executable can replace headers: </Label>
+                                <CheckBox x:Name="replaceHeadersCheckBox"
+                                          VerticalAlignment="Center"></CheckBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Executable must set headers:</Label>
+                                <CheckBox x:Name="strictCGICheckBox"
+                                          VerticalAlignment="Center"></CheckBox>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
+                <TabItem Header="Receive">
+                    <Label>Coming Soon!</Label>
+                </TabItem>
             </TabControl>
             <StackPanel>
-                <Button Click="handleStart">Start</Button>
+                <Button x:Name="startButton" Click="handleStart">Start</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -1,23 +1,10 @@
-﻿using Microsoft.Win32;
-using System;
-using System.CodeDom;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Button = System.Windows.Controls.Button;
-using CheckBox = System.Windows.Controls.CheckBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace goneshot
@@ -28,111 +15,164 @@ namespace goneshot
     public partial class MainWindow : Window
     {
         /*
-        private string port;
-        private string timeOut;
-        private string noDownload;
-        private string exitOnFial;
-        private string archiveMethod;
-        private string mdns;
-        private string fileName;
-        private string fileExt;
-        private string fileMime;
-        private string certFile;
-        private string keyFile;
-        private string ssTLS;
-        private string username;
-        private string password;
-        private string cgi;
-        private string cgiStrict;
-        private string shellCommand;
-        private string replaceHeaders;
-        private string dir;
+         * Missing options:
+         * 
+         * -t, --timeout
+         * -e, --ext
+         * --tls-cert
+         * --tls-key
+         * -T, --ss-tls
+         * -U, --username
+         * -P, --password
+         * -s, --shell
+         * -S, --shell-command
+         * -E, --env
         */
 
-        private Dictionary<String, String> args;
-        private string selectedHeader;
+        private const String oneshotLocation = "C:\\Tools\\goneshot\\oneshot.exe";
+
+        private Dictionary<String, String> paths;
+        private String selectedHeader;
+        private OpenFileDialog fd;
+        private FolderBrowserDialog fb;
 
         public MainWindow()
         {
             InitializeComponent();
-            args = new Dictionary<String, String>();
+            paths = new Dictionary<String, String>();
             downloadCheckbox.IsChecked = true;
-            headersListBox.Items.Add("Content-Type: text/plain");
+            sourceTypeComboBox.SelectedIndex = 0;
+            sendFileMode();
         }
 
         private void run()
         {
-            var process = new Process();
-            process.StartInfo.FileName = "C:\\Tools\\goneshot\\oneshot.exe";
-            String arguments = "";
-            foreach(var entry in args)
+            if (!paths.ContainsKey("path"))
             {
-                String value = entry.Value;
-                if (value != "")
-                {
-                    arguments += value + " ";
-                }
+                return;
+            }
+            var process = new Process();
+            process.StartInfo.FileName = oneshotLocation;
+            String arguments = "";
+
+            try
+            {
+                Int32.Parse(portTextBox.Text);
+                arguments += "-p " + portTextBox.Text + " ";
+            }
+            catch
+            {
+                return;
             }
 
-            switch (sendTabControl.SelectedIndex)
+            bool? isChecked = mdnsCheckbox.IsChecked;
+            if (isChecked.HasValue && isChecked.Value)
             {
-                case 0:
-                    arguments += args["path"];
+                arguments += "-M ";
+            }
+            isChecked = eofCheckbox.IsChecked;
+            if (isChecked.HasValue && isChecked.Value)
+            {
+                arguments += "-F ";
+            }
+
+            isChecked = downloadCheckbox.IsChecked;
+            if (isChecked.HasValue && !isChecked.Value)
+            {
+                arguments += "-D ";
+            }
+            if (nameTextBox.Text != "")
+            {
+                arguments += "-n " + nameTextBox.Text + " ";
+            }
+
+            switch (sourceTypeComboBox.SelectedIndex)
+            {
+                case 0: //File
+                    if (mimeTextBox.Text != "")
+                    {
+                        arguments += "-m " + mimeTextBox.Text + " ";
+                    }
+                    arguments += paths["path"];
                     break;
-                case 1:
-                    arguments += args["path"];
+                case 1: // Folder
+                    ComboBoxItem selectedItem = (ComboBoxItem)compressionComboBox.SelectedItem;
+                    arguments += "-a " + selectedItem.Content + " ";
+                    arguments += paths["path"];
                     break;
-                case 2:
+                case 2: // Executable
+
+                    if (mimeTextBox.Text != "")
+                    {
+                        arguments += "-m " + mimeTextBox.Text + " ";
+                    }
                     foreach (string header in headersListBox.Items)
                     {
                         arguments += "-H \"" + header + "\" ";
                     }
-                    arguments += @"-s C:\Windows\System32\WindowsPowerShell\v1\powershell.exe -S 'ls'";
+
+                    isChecked = replaceHeadersCheckBox.IsChecked;
+                    if (isChecked.HasValue && !isChecked.Value)
+                    {
+                        arguments += "-R ";
+                    }
+
+                    isChecked = strictCGICheckBox.IsChecked;
+                    if (isChecked.HasValue && isChecked.Value)
+                    {
+                        arguments += "-C ";
+                    }
+
+                    string dir;
+                    if(paths.TryGetValue("dir", out dir))
+                    {
+                        arguments += dir + " ";
+                    }
+                    arguments += "--cgi " + paths["path"];
                     break;
             }
-
+            Console.WriteLine("oneshot " + arguments);
             process.StartInfo.Arguments = arguments;
             process.StartInfo.UseShellExecute = true;
             process.Start();
         }
 
-        private void checkbox_Unchecked(object sender, RoutedEventArgs e)
+        private void sendFileMode()
         {
-            CheckBox checkbox = (CheckBox) sender;
-            String name = checkbox.Name;
-
-            switch (name) 
-            {
-                case "downloadCheckbox":
-                    args[name] = "-D";
-                    break;
-                case "mdnsCheckbox":
-                    args[name] = "";
-                    break;
-                case "eofCheckbox":
-                    args[name] = "";
-                    break;
-            }
-            
+            startButton.IsEnabled = false;
+            compressionPanel.IsEnabled = false;
+            compressionComboBox.SelectedIndex = -1;
+            dirPanel.IsEnabled= false;
+            headerPanel.IsEnabled = false;
+            sourceLabel.Content = "None";
+            paths.Remove("path");
+            sourceButton.Content = "Select a file";
+            headersListBox.Items.Clear();
+            headersListBox.Items.Add("Content-Type: text/plain");
         }
 
-        private void checkbox_Checked(object sender, RoutedEventArgs e)
+        private void sendFolderMode()
         {
-            CheckBox checkbox = (CheckBox)sender;
-            String name = checkbox.Name;
+            startButton.IsEnabled = false;
+            compressionPanel.IsEnabled = true;
+            compressionComboBox.SelectedIndex = 0;
+            sourceLabel.Content = "None";
+            paths.Remove("path");
+            sourceButton.Content = "Select a folder";
+            headersListBox.Items.Clear();
+            headersListBox.Items.Add("Content-Type: text/plain");
+        }
 
-            switch (name)
-            {
-                case "downloadCheckbox":
-                    args[name] = "";
-                    break;
-                case "mdnsCheckbox":
-                    args[name] = "-M";
-                    break;
-                case "eofCheckbox":
-                    args[name] = "-F";
-                    break;
-            }
+        private void sendOutputMode()
+        {
+            startButton.IsEnabled = false;
+            compressionPanel.IsEnabled = false;
+            compressionComboBox.SelectedIndex = -1;
+            dirPanel.IsEnabled = true;
+            paths.Remove("path");
+            headerPanel.IsEnabled = true;
+            sourceLabel.Content = "None";
+            sourceButton.Content = "Select an executable";
         }
 
         private void handleStart(object sender, RoutedEventArgs e)
@@ -140,36 +180,48 @@ namespace goneshot
             run();
         }
 
-        private void handleFileSelectClick(object sender, RoutedEventArgs e)
+        private void handleSourceSelectClick(object sender, RoutedEventArgs e)
         {
-            Button b = (Button)sender;
-            string name = b.Name;
-
-            switch (name)
+            switch (sourceTypeComboBox.SelectedIndex)
             {
-                case "fileDialogButton":
-                    OpenFileDialog fd = new OpenFileDialog();
+                case 0:
+                    this.fd = new OpenFileDialog();
 
-                    bool? result = fd.ShowDialog();
+                    bool? result = this.fd.ShowDialog();
 
                     if (result.HasValue && result.Value)
                     {
-                        args["path"] = fd.FileName;
-                        fileLabel.Content = fd.FileName;
-                        folderLabel.Content = "None";
-                        dirLabel.Content = "None"; 
-                    }
-                    break;
-                case "folderBrowserButton":
-                    FolderBrowserDialog fb = new FolderBrowserDialog();
-
-                    if (fb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        args["path"] = fb.SelectedPath;
-                        folderLabel.Content = fb.SelectedPath;
-                        fileLabel.Content = "None";
+                        paths["path"] = this.fd.FileName;
+                        sourceLabel.Content = this.fd.FileName;
                         dirLabel.Content = "None";
+                        startButton.IsEnabled = true;
                     }
+                    this.fd = null;
+                    break;
+                case 1:
+                    this.fb = new FolderBrowserDialog();
+
+                    if (this.fb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        paths["path"] = this.fb.SelectedPath;
+                        sourceLabel.Content = this.fb.SelectedPath;
+                        dirLabel.Content = "None";
+                        startButton.IsEnabled = true;
+                    }
+                    this.fb = null;
+                    break;
+                case 2:
+                    this.fd = new OpenFileDialog();
+
+                    result = this.fd.ShowDialog();
+
+                    if (result.HasValue && result.Value)
+                    {
+                        paths["path"] = fd.FileName;
+                        sourceLabel.Content = fd.FileName;
+                        startButton.IsEnabled = true;
+                    }
+                    this.fd = null;
                     break;
             }
         }
@@ -213,10 +265,24 @@ namespace goneshot
 
             if (fb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                args["dir"] = "-d \"" + fb.SelectedPath + "\"";
+                paths["dir"] = "-d \"" + fb.SelectedPath + "\"";
                 dirLabel.Content = fb.SelectedPath;
-                fileLabel.Content = "None";
-                folderLabel.Content = "None";
+            }
+        }
+
+        private void sourceTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (sourceTypeComboBox.SelectedIndex)
+            {
+                case 0:
+                    sendFileMode();
+                    break;
+                case 1:
+                    sendFolderMode();
+                    break;
+                case 2:
+                    sendOutputMode();
+                    break;
             }
         }
     }
