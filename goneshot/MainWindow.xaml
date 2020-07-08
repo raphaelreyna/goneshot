@@ -5,33 +5,125 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:goneshot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="192.857" Width="328.143">
+        Title="MainWindow" Height="483.3" Width="328.143">
     <Grid>
-        <TabControl>
-            <TabItem Header="Send">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <Label>File/Folder:</Label>
-                        <Label x:Name="fileDirLabel">None</Label>
-                        <Button x:Name="selectFileDir" HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="113">Select a file or folder</Button>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label>Use mDNS (Avahi/Bonjour):</Label>
+                <CheckBox x:Name="mdnsCheckbox"
+                                  Checked="checkbox_Checked"
+                                  Unchecked="checkbox_Unchecked"
+                                  VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Exit on fail:</Label>
+                <CheckBox x:Name="eofCheckbox"
+                                  Checked="checkbox_Checked"
+                                  Unchecked="checkbox_Unchecked"
+                                  VerticalAlignment="Center"/>
+            </StackPanel>
+            <TabControl>
+                <TabItem Header="Send">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Trigger download:</Label>
+                            <CheckBox x:Name="downloadCheckbox"
+                                  Checked="checkbox_Checked"
+                                  Unchecked="checkbox_Unchecked"
+                                  VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TabControl x:Name="sendTabControl">
+                                <TabItem Header="Send File">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>File:</Label>
+                                            <Label x:Name="fileLabel">None</Label>
+                                            <Button x:Name="fileDialogButton"
+                                                Click="handleFileSelectClick"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Height="20"
+                                                Width="113">
+                                                Select a file
+                                            </Button>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Name:</Label>
+                                            <TextBox x:Name="nameTextBox" Width="100"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Extension:</Label>
+                                            <TextBox x:Name="extTextBox" Width="100"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>MIME type:</Label>
+                                            <TextBox x:Name="mimeTextBox" Width="100"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </TabItem>
+                                <TabItem Header="Send Folder">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Folder:</Label>
+                                            <Label x:Name="folderLabel">None</Label>
+                                            <Button x:Name="folderBrowserButton"
+                                                Click="handleFileSelectClick"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Height="20" 
+                                                Width="113">
+                                                Select a folder
+                                            </Button>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Compression Method:</Label>
+                                            <ComboBox Width="70">
+                                                <ComboBoxItem Content=".zip"></ComboBoxItem>
+                                                <ComboBoxItem Content=".tar.gz"></ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </TabItem>
+                                <TabItem Header="Send Output">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Command:</Label>
+                                            <TextBox x:Name="scriptTextBox" Width="220"></TextBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>
+                                                Working directory:
+                                            </Label>
+                                            <Label x:Name="dirLabel">None</Label>
+                                            <Button Click="handleDirButton">Select a directory</Button>
+                                        </StackPanel>
+                                        <Label>Header:</Label>
+                                        <ListBox x:Name="headersListBox" SelectionChanged="handleHeaderSelection" SelectionMode="Single">
+                                        </ListBox>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox x:Name="headerTextBox" Width="250"></TextBox>
+                                            <Button x:Name="remHeaderButton"
+                                    Click="handleAddRemButton"
+                                    Width="20">
+                                                -
+                                            </Button>
+                                            <Button x:Name="addHeaderButton"
+                                    Click="handleAddRemButton"
+                                    Width="20">
+                                                +
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </TabItem>
+                            </TabControl>
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Trigger download:</Label>
-                        <CheckBox x:Name="downloadCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Use mDNS (Avahi/Bonjour):</Label>
-                        <CheckBox x:Name="mdnsCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Exit on fail:</Label>
-                        <CheckBox x:Name="eofCheckbox"  Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <Button Click="handleStart">Start</Button>
-                    </StackPanel>
-                </StackPanel>
-            </TabItem>
-        </TabControl>
+                </TabItem>
+            </TabControl>
+            <StackPanel>
+                <Button Click="handleStart">Start</Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
