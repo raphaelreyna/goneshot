@@ -29,7 +29,7 @@ namespace goneshot
          * -E, --env
         */
 
-        private const String oneshotLocation = "C:\\Tools\\goneshot\\oneshot.exe";
+        private const String oneshotLocation = "oneshot.exe";
 
         private Dictionary<String, String> paths;
         private String selectedHeader;

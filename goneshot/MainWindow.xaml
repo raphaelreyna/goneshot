@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:goneshot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="495.3" Width="305.333">
+        Title="Goneshot" Height="495.3" Width="305.333">
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
