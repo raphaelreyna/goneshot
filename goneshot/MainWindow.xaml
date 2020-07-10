@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:goneshot"
         mc:Ignorable="d"
+        x:Name="mainWindow"
         Title="Goneshot" Height="495.3" Width="305.333">
     <Grid>
         <StackPanel Orientation="Vertical">
@@ -25,11 +26,11 @@
                          Height="18"
                          VerticalContentAlignment="Center">8080</TextBox>
             </StackPanel>
-            <TabControl>
+            <TabControl x:Name="modeTabControl" SelectionChanged="modeTabControl_SelectionChanged">
                 <TabItem Header="Send">
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
-                            <Label>Source Type: </Label>
+                            <Label>Source Type:</Label>
                             <ComboBox x:Name="sourceTypeComboBox"
                                       Width="100"
                                       Height="20"
@@ -52,7 +53,7 @@
                                 Select a file
                             </Button>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel x:Name="mimePanel" Orientation="Horizontal">
                             <Label>MIME type:</Label>
                             <TextBox x:Name="mimeTextBox"
                                      Width="100"
@@ -114,7 +115,7 @@
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Label>Executable can replace headers: </Label>
+                                <Label>Executable can replace headers:</Label>
                                 <CheckBox x:Name="replaceHeadersCheckBox"
                                           VerticalAlignment="Center"></CheckBox>
                             </StackPanel>
@@ -127,7 +128,16 @@
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Receive">
-                    <Label>Coming Soon!</Label>
+                    <StackPanel x:Name="saveDirPanel" Orientation="Horizontal">
+                        <Label>
+                            Save to:
+                        </Label>
+                        <Label x:Name="saveDirLabel">None</Label>
+                        <Button x:Name="saveDirButton"
+                                    Width="110"
+                                    Height="20"
+                                    Click="handleSaveDirClick">Select a folder</Button>
+                    </StackPanel>
                 </TabItem>
             </TabControl>
             <StackPanel>
